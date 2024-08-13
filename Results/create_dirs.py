@@ -9,19 +9,15 @@ t_values = range(5)
 j_size = [32, 64, 128, 256, 512, 1024, 2048]
 k_size = [100, 200, 500, 1000, 2000, 5000, 10000]
 
-# Function to create bash files
 def create_bash_file(directory, command):
     with open(os.path.join(directory, "run_script.sh"), "w") as file:
         file.write(command)
 
-# Loop through the combinations of p
 for p in p_values:
-    # Create the directory gpu_solv{p} if it doesn't exist
     gpu_directory = f"gpu_solv{p}"
     if not os.path.exists(gpu_directory):
         os.makedirs(gpu_directory)
         
-    # Loop through the combinations of j and k
     for j in j_values:
         for k in k_values:
             if p == 4:
@@ -30,41 +26,32 @@ for p in p_values:
                     t_full_path = os.path.join(gpu_directory, t_directory_name)
                     if not os.path.exists(t_full_path):
                         os.makedirs(t_full_path)
-                    # Create bash file with the command
                     command = f"python ../../../gpu_heat.py -m {j_size[j]} {j_size[j]} {j_size[j]} -N {k_size[k]} -s {p} -p {t} >> times.txt"
                     create_bash_file(t_full_path, command)
             
             else:
 
-                # Create the directory gpu_solv{p}_{j}_{k}
                 directory_name = f"gpu_solv{p}_{j}_{k}"
                 full_path = os.path.join(gpu_directory, directory_name)
 
-                # Create the directory if it doesn't exist
                 if not os.path.exists(full_path):
                     os.makedirs(full_path)
 
-                # Create bash file with the command
                 command = f"python ../../../gpu_heat.py -m {j_size[j]} {j_size[j]} {j_size[j]} -N {k_size[k]} -s {p} >> times.txt"
                 create_bash_file(full_path, command)
 
-# Loop through the combinations of i, j, and k
 for i in i_values:
     for j in j_values:
         for k in k_values:
-            # Create the directory seq_solv{i} if it doesn't exist
             seq_directory = f"seq_solv{i}"
             if not os.path.exists(seq_directory):
                 os.makedirs(seq_directory)
             
-            # Create the directory seq_solv{i}_{j}_{k}
             directory_name = f"seq_solv{i}_{j}_{k}"
             full_path = os.path.join(seq_directory, directory_name)
 
-            # Create the directory if it doesn't exist
             if not os.path.exists(full_path):
                 os.makedirs(full_path)
             
-            # Create bash file with the command
             command = f"python ../../../sequential_heat.py -m {j_size[j]} {j_size[j]} {j_size[j]} -N {k_size[k]} -s {i} >> times.txt"
             create_bash_file(full_path, command)
